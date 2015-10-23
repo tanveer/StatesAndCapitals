@@ -7,27 +7,30 @@
 //
 
 import UIKit
+import MapKit
+import CoreLocation
 
-class ViewController: UIViewController {
-    
+class ViewController: UIViewController, CLLocationManagerDelegate{
+
+    @IBOutlet weak var stateMap: MKMapView!
     @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var firstButton: UIButton!
     @IBOutlet weak var secondButton: UIButton!
     @IBOutlet weak var thirdButton: UIButton!
     @IBOutlet weak var forthButton: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
-    @IBOutlet weak var nextQuestionButton: NSLayoutConstraint!
+    var stateAbbr = [String]()
     var score = Int()
-    let json = QuestionData()
-    var dictionary = [String : String]()
+    var json: QuestionData!
     var num = Int()
-    var states = [String]()
+    var dics = [String: [String:String]]()
+    var lat = Double()
+    var long = Double()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dictionary = json.createStateCapitalDictionary()
+        json = QuestionData()
         setQ()
-        
     }
     
 // MARK: Action methods
@@ -58,24 +61,45 @@ class ViewController: UIViewController {
     
 // MARK: Helper methods
     func setQ(){
-        for (key, _) in dictionary {
-            states.append(key)
+        dics = json.json()
+        
+        // states abbriviation array
+        for (key, _) in dics{
+            stateAbbr.append(key)
         }
-        num = Int(arc4random_uniform(UInt32(states.count)))
-        let state = states[num]
-        questionLabel.text = "What is the capital of \"\(state)\"?"
-        secondButton.setTitle("\(dictionary[states[num]]!)", forState: .Normal)
-        thirdButton.setTitle("\(dictionary[states[10]]!)", forState: .Normal)
-        firstButton.setTitle("\(dictionary[states[15]]!)", forState: .Normal)
-        forthButton.setTitle("\(dictionary[states[22]]!)", forState: .Normal)
+        
+        // random number
+        num = Int(arc4random_uniform(UInt32(stateAbbr.count)))
+        
+        // set question label and answer buttons
+        questionLabel.text = "What is the capital of \"\(dics[stateAbbr[num]]!["name"]!)\"?"
+        secondButton.setTitle("\(dics[stateAbbr[num]]!["capital"]!)", forState: .Normal)
+        thirdButton.setTitle("\(dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
+        firstButton.setTitle("\(dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
+        forthButton.setTitle("\(dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
+        
+        // capture lat and long 
+        lat = Double(dics[stateAbbr[num]]!["lat"]!)!
+        long = Double(dics[stateAbbr[num]]!["long"]!)!
+        
+        // create map location based on lat, long
+        let center = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+        stateMap.setRegion(region, animated: true)
     }
     
+    // validate answer
+    
     func checkAnswer(title:String){
-        if title == dictionary[states[num]] {
+        if title == dics[stateAbbr[num]]!["capital"] {
             questionLabel.text = "Correct!!"
-        }
-        else {
-            questionLabel.text = "Sorry the correct answer is\n\(dictionary[states[num]]!)"
+            ++score
+            scoreLabel.text = "\(score)"
+            firstButton.enabled = false
+        } else {
+            questionLabel.text = "Sorry the correct answer is\n\(dics[stateAbbr[num]]!["capital"]!)"
+            --score
+            scoreLabel.text = "\(score)"
         }
     }
 }

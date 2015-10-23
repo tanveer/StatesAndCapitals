@@ -14,6 +14,8 @@
 		A134526C1BD33A810068ADF9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A134526A1BD33A810068ADF9 /* LaunchScreen.storyboard */; };
 		A13452751BD341E50068ADF9 /* jsonData.json in Resources */ = {isa = PBXBuildFile; fileRef = A13452741BD341E50068ADF9 /* jsonData.json */; };
 		A13452771BD3422E0068ADF9 /* QuestionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13452761BD3422E0068ADF9 /* QuestionData.swift */; };
+		A1E3E1401BDA9C6C004390DF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E3E13F1BDA9C6C004390DF /* MapKit.framework */; };
+		A1E3E1421BDA9C77004390DF /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E3E1411BDA9C77004390DF /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		A134526D1BD33A810068ADF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A13452741BD341E50068ADF9 /* jsonData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonData.json; sourceTree = "<group>"; };
 		A13452761BD3422E0068ADF9 /* QuestionData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionData.swift; sourceTree = "<group>"; };
+		A1E3E13F1BDA9C6C004390DF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		A1E3E1411BDA9C77004390DF /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +37,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1E3E1421BDA9C77004390DF /* CoreLocation.framework in Frameworks */,
+				A1E3E1401BDA9C6C004390DF /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +48,8 @@
 		A13452551BD33A800068ADF9 = {
 			isa = PBXGroup;
 			children = (
+				A1E3E1411BDA9C77004390DF /* CoreLocation.framework */,
+				A1E3E13F1BDA9C6C004390DF /* MapKit.framework */,
 				A13452601BD33A810068ADF9 /* StatesAndCapitals */,
 				A13452731BD33AA10068ADF9 /* SupportingFiles */,
 				A134525F1BD33A800068ADF9 /* Products */,
