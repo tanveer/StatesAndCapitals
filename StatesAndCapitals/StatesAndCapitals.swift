@@ -9,5 +9,23 @@
 import UIKit
 
 class StatesAndCapitals: NSObject {
-
+    
+    var dics = [String: [String:String]]()
+    var lat = Double()
+    var long = Double()
+    var quizData = QuestionData()
+    
+    
+    func quizSetup() -> [String] {
+        var stateAbbr = [String]()
+        // states abbriviation array
+        for (key, _) in quizDataDictionary(){
+            stateAbbr.append(key)
+        }
+        return stateAbbr
+    }
+    
+    func quizDataDictionary() -> [String:[String:String]]{
+        return quizData.json()
+    }
 }

@@ -21,7 +21,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     @IBOutlet weak var scoreLabel: UILabel!
     var stateAbbr = [String]()
     var score = Int()
-    var json: QuestionData!
+    var json = StatesAndCapitals()
     var num = Int()
     var dics = [String: [String:String]]()
     var lat = Double()
@@ -29,7 +29,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        json = QuestionData()
         setQ()
     }
     
@@ -61,13 +60,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     
 // MARK: Helper methods
     func setQ(){
-        dics = json.json()
-        
-        // states abbriviation array
-        for (key, _) in dics{
-            stateAbbr.append(key)
-        }
-        
+        dics = json.quizDataDictionary()
+        stateAbbr = json.quizSetup()
         // random number
         num = Int(arc4random_uniform(UInt32(stateAbbr.count)))
         
@@ -89,7 +83,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     }
     
     // validate answer
-    
     func checkAnswer(title:String){
         if title == dics[stateAbbr[num]]!["capital"] {
             questionLabel.text = "Correct!!"

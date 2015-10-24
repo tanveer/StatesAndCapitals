@@ -16,6 +16,7 @@
 		A13452771BD3422E0068ADF9 /* QuestionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13452761BD3422E0068ADF9 /* QuestionData.swift */; };
 		A1E3E1401BDA9C6C004390DF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E3E13F1BDA9C6C004390DF /* MapKit.framework */; };
 		A1E3E1421BDA9C77004390DF /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E3E1411BDA9C77004390DF /* CoreLocation.framework */; };
+		A1E3E1441BDAE4FE004390DF /* StatesAndCapitals.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E3E1431BDAE4FE004390DF /* StatesAndCapitals.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		A13452761BD3422E0068ADF9 /* QuestionData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionData.swift; sourceTree = "<group>"; };
 		A1E3E13F1BDA9C6C004390DF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		A1E3E1411BDA9C77004390DF /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		A1E3E1431BDAE4FE004390DF /* StatesAndCapitals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatesAndCapitals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 				A13452761BD3422E0068ADF9 /* QuestionData.swift */,
 				A13452741BD341E50068ADF9 /* jsonData.json */,
 				A13452651BD33A810068ADF9 /* Main.storyboard */,
+				A1E3E1431BDAE4FE004390DF /* StatesAndCapitals.swift */,
 			);
 			path = StatesAndCapitals;
 			sourceTree = "<group>";
@@ -160,6 +163,7 @@
 			files = (
 				A13452771BD3422E0068ADF9 /* QuestionData.swift in Sources */,
 				A13452641BD33A810068ADF9 /* ViewController.swift in Sources */,
+				A1E3E1441BDAE4FE004390DF /* StatesAndCapitals.swift in Sources */,
 				A13452621BD33A810068ADF9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
