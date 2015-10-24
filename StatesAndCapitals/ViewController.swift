@@ -9,6 +9,9 @@
 import UIKit
 import MapKit
 import CoreLocation
+import QuartzCore
+import AVFoundation
+
 
 class ViewController: UIViewController, CLLocationManagerDelegate{
 
@@ -21,6 +24,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     @IBOutlet weak var scoreLabel: UILabel!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var wrongAnswerLabel: UILabel!
+    
+    let speechSynthsizer = AVSpeechSynthesizer()
+    let speechVoice = AVSpeechSynthesisVoiceIdentifierAlex
+    //let voices = AVSpeechSynthesisVoice()
     
     var stateAbbr = [String]()
     var points = Int()
@@ -87,7 +94,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
                 self.scoreLabel.text = "0"
                 self.wrongAnswerLabel.text = "0"
             }))
-            
             alert.addAction(UIAlertAction(title: "No", style: .Default, handler: { (action) -> Void in
                 //TODO pop a different view 
                 
@@ -101,7 +107,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
             presentViewController(alert, animated: true, completion: nil)
             
         } else {
-            // set question label and answer butt
+            
+            // set question and answer labels
             num = Int(arc4random_uniform(UInt32(stateAbbr.count)))
             questionLabel.text = "What is the capital of \"\(quiz.dics[stateAbbr[num]]!["name"]!)\"?"
             secondButton.setTitle("\(quiz.dics[stateAbbr[num]]!["capital"]!)", forState: .Normal)
@@ -118,12 +125,33 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
             stateMap.setRegion(region, animated: true)
         }
+        
+        
+        //text to speech
+        let speechUtternce = AVSpeechUtterance(string: "\(questionLabel.text!)")
+        speechUtternce.volume = 0.50
+        if stateAbbr.isEmpty {
+            speechSynthsizer.stopSpeakingAtBoundary(.Immediate)
+        } else {
+            speechSynthsizer.speakUtterance(speechUtternce)
+        }
     }
     
     // validate answer
     func checkAnswer(title:String){
         if title == quiz.dics[stateAbbr[num]]!["capital"] {
             questionLabel.text = "Correct!!"
+            
+            // text to speech
+            let speechUtternce = AVSpeechUtterance(string: "That is \(questionLabel.text!)")
+            speechUtternce.volume = 0.50
+            if stateAbbr.isEmpty {
+                speechSynthsizer.stopSpeakingAtBoundary(.Immediate)
+            } else {
+                speechSynthsizer.speakUtterance(speechUtternce)
+            }
+            
+            // calculate points
             ++points
             scoreLabel.text = "\(points)"
             firstButton.enabled = false
@@ -134,6 +162,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
         } else {
             
             questionLabel.text = "Sorry the correct answer is\n\(quiz.dics[stateAbbr[num]]!["capital"]!)"
+            
+            // text to speech
+            let speechUtternce = AVSpeechUtterance(string: "\(questionLabel.text!)")
+            speechUtternce.volume = 0.50
+            if stateAbbr.isEmpty {
+                speechSynthsizer.stopSpeakingAtBoundary(.Immediate)
+            } else {
+                speechSynthsizer.speakUtterance(speechUtternce)
+            }
+            
+            // calculate wrong answers
             ++wrongAnswer
             wrongAnswerLabel.text = "\(wrongAnswer)"
             firstButton.enabled = false
