@@ -19,9 +19,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     @IBOutlet weak var thirdButton: UIButton!
     @IBOutlet weak var forthButton: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var nextButton: UIButton!
+    @IBOutlet weak var wrongAnswerLabel: UILabel!
+    
     var stateAbbr = [String]()
-    var score = Int()
-    var json = StatesAndCapitals()
+    var points = Int()
+    var wrongAnswer = Int()
+    let quiz = StatesAndCapitals()
     var num = Int()
     var dics = [String: [String:String]]()
     var lat = Double()
@@ -29,70 +33,113 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setQ()
+        stateAbbr = quiz.quizSetup()
+        initialSetup()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
     }
     
 // MARK: Action methods
     
     @IBAction func nextQuestion(sender: UIButton) {
-        setQ()
+        initialSetup()
+        firstButton.enabled = true
+        secondButton.enabled = true
+        thirdButton.enabled = true
+        forthButton.enabled = true
     }
 
     @IBAction func answer1(sender: UIButton) {
         let title = sender.titleLabel?.text
         checkAnswer(title!)
+        stateAbbr.removeAtIndex(num)
     }
     
     @IBAction func answer2(sender: UIButton) {
         let title = sender.titleLabel?.text
-       checkAnswer(title!)
+        checkAnswer(title!)
+        stateAbbr.removeAtIndex(num)
     }
     
     @IBAction func answer3(sender: UIButton) {
         let title = sender.titleLabel?.text
         checkAnswer(title!)
+        stateAbbr.removeAtIndex(num)
     }
     
     @IBAction func answer4(sender: UIButton) {
         let title = sender.titleLabel?.text
         checkAnswer(title!)
+        stateAbbr.removeAtIndex(num)
     }
     
 // MARK: Helper methods
-    func setQ(){
-        dics = json.quizDataDictionary()
-        stateAbbr = json.quizSetup()
-        // random number
-        num = Int(arc4random_uniform(UInt32(stateAbbr.count)))
-        
-        // set question label and answer buttons
-        questionLabel.text = "What is the capital of \"\(dics[stateAbbr[num]]!["name"]!)\"?"
-        secondButton.setTitle("\(dics[stateAbbr[num]]!["capital"]!)", forState: .Normal)
-        thirdButton.setTitle("\(dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
-        firstButton.setTitle("\(dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
-        forthButton.setTitle("\(dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
-        
-        // capture lat and long 
-        lat = Double(dics[stateAbbr[num]]!["lat"]!)!
-        long = Double(dics[stateAbbr[num]]!["long"]!)!
-        
-        // create map location based on lat, long
-        let center = CLLocationCoordinate2D(latitude: lat, longitude: long)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
-        stateMap.setRegion(region, animated: true)
+    func initialSetup() {
+        if stateAbbr.isEmpty {
+            let alert = UIAlertController(title: "Game over", message: "Total points: \(points)\nDo you wish to play again?", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler: { action in
+                self.stateAbbr = self.quiz.quizSetup()
+                self.initialSetup()
+                self.points = 0
+                self.wrongAnswer = 0
+                self.scoreLabel.text = "0"
+                self.wrongAnswerLabel.text = "0"
+            }))
+            
+            alert.addAction(UIAlertAction(title: "No", style: .Default, handler: { (action) -> Void in
+                //TODO pop a different view 
+                
+                self.firstButton.enabled = false
+                self.secondButton.enabled = false
+                self.thirdButton.enabled = false
+                self.forthButton.enabled = false
+                self.nextButton.enabled = false
+                
+            }))
+            presentViewController(alert, animated: true, completion: nil)
+            
+        } else {
+            // set question label and answer butt
+            num = Int(arc4random_uniform(UInt32(stateAbbr.count)))
+            questionLabel.text = "What is the capital of \"\(quiz.dics[stateAbbr[num]]!["name"]!)\"?"
+            secondButton.setTitle("\(quiz.dics[stateAbbr[num]]!["capital"]!)", forState: .Normal)
+            thirdButton.setTitle("\(quiz.dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
+            firstButton.setTitle("\(quiz.dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
+            forthButton.setTitle("\(quiz.dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
+            
+            // capture lat and long
+            lat = Double(quiz.dics[stateAbbr[num]]!["lat"]!)!
+            long = Double(quiz.dics[stateAbbr[num]]!["long"]!)!
+            
+            // create map location based on lat, long
+            let center = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+            stateMap.setRegion(region, animated: true)
+        }
     }
     
     // validate answer
     func checkAnswer(title:String){
-        if title == dics[stateAbbr[num]]!["capital"] {
+        if title == quiz.dics[stateAbbr[num]]!["capital"] {
             questionLabel.text = "Correct!!"
-            ++score
-            scoreLabel.text = "\(score)"
+            ++points
+            scoreLabel.text = "\(points)"
             firstButton.enabled = false
+            secondButton.enabled = false
+            thirdButton.enabled = false
+            forthButton.enabled = false
+            
         } else {
-            questionLabel.text = "Sorry the correct answer is\n\(dics[stateAbbr[num]]!["capital"]!)"
-            --score
-            scoreLabel.text = "\(score)"
+            
+            questionLabel.text = "Sorry the correct answer is\n\(quiz.dics[stateAbbr[num]]!["capital"]!)"
+            ++wrongAnswer
+            wrongAnswerLabel.text = "\(wrongAnswer)"
+            firstButton.enabled = false
+            secondButton.enabled = false
+            thirdButton.enabled = false
+            forthButton.enabled = false
         }
     }
 }
