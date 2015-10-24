@@ -12,8 +12,10 @@ import UIKit
 struct QuestionData {
     let file = NSBundle.mainBundle().pathForResource("jsonData", ofType: "json")
     var dictionary = [String:[String:String]]()
+    //var color:[UIColor]?
     init(){
         self.dictionary = json()
+        
     }
     
     func json() -> [String: [String:String]] {
