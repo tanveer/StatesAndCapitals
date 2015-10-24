@@ -34,14 +34,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
     var wrongAnswer = Int()
     let quiz = StatesAndCapitals()
     var num = Int()
-    var dics = [String: [String:String]]()
     var lat = Double()
     var long = Double()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         stateAbbr = quiz.quizSetup()
-        initialSetup()
+        loadGame()
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,11 +50,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
 // MARK: Action methods
     
     @IBAction func nextQuestion(sender: UIButton) {
-        initialSetup()
-        firstButton.enabled = true
-        secondButton.enabled = true
-        thirdButton.enabled = true
-        forthButton.enabled = true
+        loadGame()
+        enableButton()
     }
 
     @IBAction func answer1(sender: UIButton) {
@@ -82,32 +78,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
         stateAbbr.removeAtIndex(num)
     }
     
-// MARK: Helper methods
-    func initialSetup() {
+    // MARK: LoadGame methohd
+    
+    func loadGame() {
         if stateAbbr.isEmpty {
             let alert = UIAlertController(title: "Game over", message: "Total points: \(points)\nDo you wish to play again?", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler: { action in
                 self.stateAbbr = self.quiz.quizSetup()
-                self.initialSetup()
-                self.points = 0
-                self.wrongAnswer = 0
-                self.scoreLabel.text = "0"
-                self.wrongAnswerLabel.text = "0"
+                self.loadGame()
+                self.reset()
             }))
             alert.addAction(UIAlertAction(title: "No", style: .Default, handler: { (action) -> Void in
                 //TODO pop a different view 
                 
-                self.firstButton.enabled = false
-                self.secondButton.enabled = false
-                self.thirdButton.enabled = false
-                self.forthButton.enabled = false
+                self.disableButton()
                 self.nextButton.enabled = false
-                
             }))
             presentViewController(alert, animated: true, completion: nil)
             
         } else {
-            
             // set question and answer labels
             num = Int(arc4random_uniform(UInt32(stateAbbr.count)))
             questionLabel.text = "What is the capital of \"\(quiz.dics[stateAbbr[num]]!["name"]!)\"?"
@@ -116,35 +105,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
             firstButton.setTitle("\(quiz.dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
             forthButton.setTitle("\(quiz.dics[stateAbbr[Int(arc4random_uniform(UInt32(stateAbbr.count)))]]!["capital"]!)", forState: .Normal)
             
-            // capture lat and long
-            lat = Double(quiz.dics[stateAbbr[num]]!["lat"]!)!
-            long = Double(quiz.dics[stateAbbr[num]]!["long"]!)!
-            
-            // create map location based on lat, long
-            let center = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
-            stateMap.setRegion(region, animated: true)
+            //show map
+            setMap()
         }
-        
         
         //text to speech
         let speechUtternce = AVSpeechUtterance(string: "\(questionLabel.text!)")
         speechUtternce.volume = 0.50
+        
         if stateAbbr.isEmpty {
             speechSynthsizer.stopSpeakingAtBoundary(.Immediate)
+            
         } else {
             speechSynthsizer.speakUtterance(speechUtternce)
         }
     }
     
-    // validate answer
+    // MARK: Validate answer
+    
     func checkAnswer(title:String){
         if title == quiz.dics[stateAbbr[num]]!["capital"] {
             questionLabel.text = "Correct!!"
-            
             // text to speech
             let speechUtternce = AVSpeechUtterance(string: "That is \(questionLabel.text!)")
             speechUtternce.volume = 0.50
+            
             if stateAbbr.isEmpty {
                 speechSynthsizer.stopSpeakingAtBoundary(.Immediate)
             } else {
@@ -154,10 +139,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
             // calculate points
             ++points
             scoreLabel.text = "\(points)"
-            firstButton.enabled = false
-            secondButton.enabled = false
-            thirdButton.enabled = false
-            forthButton.enabled = false
+            disableButton()
             
         } else {
             
@@ -166,6 +148,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
             // text to speech
             let speechUtternce = AVSpeechUtterance(string: "\(questionLabel.text!)")
             speechUtternce.volume = 0.50
+            
             if stateAbbr.isEmpty {
                 speechSynthsizer.stopSpeakingAtBoundary(.Immediate)
             } else {
@@ -175,11 +158,39 @@ class ViewController: UIViewController, CLLocationManagerDelegate{
             // calculate wrong answers
             ++wrongAnswer
             wrongAnswerLabel.text = "\(wrongAnswer)"
-            firstButton.enabled = false
-            secondButton.enabled = false
-            thirdButton.enabled = false
-            forthButton.enabled = false
+            disableButton()
         }
+    }
+    
+    // MARK: Helper methods
+    
+    func disableButton(){
+        firstButton.enabled = false
+        secondButton.enabled = false
+        thirdButton.enabled = false
+        forthButton.enabled = false
+    }
+    
+    func enableButton(){
+        firstButton.enabled = true
+        secondButton.enabled = true
+        thirdButton.enabled = true
+        forthButton.enabled = true
+    }
+    
+    func reset(){
+        points = 0
+        wrongAnswer = 0
+        scoreLabel.text = "0"
+        wrongAnswerLabel.text = "0"
+    }
+    
+    func setMap(){
+        lat = Double(quiz.dics[stateAbbr[num]]!["lat"]!)!
+        long = Double(quiz.dics[stateAbbr[num]]!["long"]!)!
+        let center = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+        stateMap.setRegion(region, animated: true)
     }
 }
 
